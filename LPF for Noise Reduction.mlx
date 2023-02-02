@@ -1,0 +1,34 @@
+% Load the noisy audio signal
+[y,Fs] = audioread('noisy_audio.wav');
+
+% Plot the noisy audio signal
+figure;
+subplot(2,1,1);
+plot(y);
+title('Noisy Audio Signal');
+
+% Apply a low-pass filter to the noisy audio signal
+fc = 1000; % Cutoff frequency in Hz
+[b,a] = butter(10,fc/(Fs/2),'low'); % Design the Butterworth filter
+filtered_signal = filter(b,a,y); % Apply the filter to the noisy signal
+
+% Plot the filtered signal
+subplot(2,1,2);
+plot(filtered_signal);
+title('Filtered Signal');
+
+% Save the denoised audio signal
+audiowrite('denoised_audio.wav',filtered_signal,Fs);
+
+% Play the original noisy signal and the denoised signal
+fprintf('Playing the original noisy signal...\n');
+sound(y,Fs);
+pause(length(y)/Fs + 1);
+fprintf('Playing the denoised signal...\n');
+sound(filtered_signal,Fs);
+
+% Calculate the SNR (Signal-to-Noise Ratio) of the denoised signal
+original_power = mean(y.^2);
+noise_power = mean((y - filtered_signal).^2);
+SNR = 10*log10(original_power/noise_power);
+fprintf('SNR of the denoised signal: %.2f dB\n',SNR);

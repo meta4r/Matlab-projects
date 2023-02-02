@@ -1,0 +1,34 @@
+% Load the audio signal
+[y,Fs] = audioread('audio.wav');
+
+% Plot the original audio signal
+figure;
+subplot(2,1,1);
+plot(y);
+title('Original Audio Signal');
+
+% Downsample the audio signal
+M = 4; % Downsampling factor
+downsampled_signal = y(1:M:end);
+Fs_downsampled = Fs/M; % Update the sampling rate
+
+% Plot the downsampled audio signal
+subplot(2,1,2);
+plot(downsampled_signal);
+title('Downsampled Audio Signal');
+
+% Save the downsampled audio signal
+audiowrite('downsampled_audio.wav',downsampled_signal,Fs_downsampled);
+
+% Play the original audio signal and the downsampled signal
+fprintf('Playing the original audio signal...\n');
+sound(y,Fs);
+pause(length(y)/Fs + 1);
+fprintf('Playing the downsampled audio signal...\n');
+sound(downsampled_signal,Fs_downsampled);
+
+% Calculate the compression ratio
+original_size = numel(y) * 4; % 4 bytes per sample (single precision)
+compressed_size = numel(downsampled_signal) * 4;
+compression_ratio = compressed_size / original_size;
+fprintf('Compression ratio: %.2f\n',compression_ratio);
